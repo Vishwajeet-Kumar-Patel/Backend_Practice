@@ -1,24 +1,27 @@
 class ApiError extends Error {
     constructor(
-        statusCode,
-        message = "something went wrong",
-        errors = [],
-        stack = ""
-    ){
-        super(message)
-        this.statusCode = statusCode
-        this.data = null
-        this.message = message
-        this.success = false;
-        this.errors = errors
+        statusCode,             // HTTP status code representing the error
+        message = "something went wrong", // Default error message
+        errors = [],            // Array to hold additional error details
+        stack = ""              // Optional stack trace
+    ) {
+        super(message);         // Call the parent class (Error) constructor with the message
+        this.statusCode = statusCode; // Assign the status code
+        this.data = null;       // Initialize data property to null
+        this.message = message; // Assign the error message
+        this.success = false;   // Indicates the failure status
+        this.errors = errors;   // Assign additional error details
 
-        if(stack) {
-            this.stack = stack 
+        // Capture the stack trace if provided, otherwise capture the current stack trace
+        if (stack) {
+            this.stack = stack;
         } else {
-            Error.captureStackTrace(this, this.constructor) /* To capture the location where a decorator function is applied, we can use the `Error. captureStackTrace` method. This method allows us to create a custom error object and capture the call stack information of the current code execution. */
+            Error.captureStackTrace(this, this.constructor); 
+            /* Error.captureStackTrace creates a .stack property on the error instance which includes the point in the code at which Error.captureStackTrace was called.
+               This is useful for custom error handling to maintain the correct stack trace. */
         }
-     
     }
 }
 
-export { ApiError }
+// Export the ApiError class so it can be used in other modules
+export { ApiError };
