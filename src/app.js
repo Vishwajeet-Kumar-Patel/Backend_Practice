@@ -24,7 +24,15 @@ app.use(express.static('public'));
 // Use middleware to parse cookies
 app.use(cookieParser());
 
-export { app };
+// Routes import and declaration
+import userRoutes from './routes/user.routes.js';
+app.use('/api/v2/users', userRoutes); // Mount userRoutes under /api/v2/users
+
+// http://localhost:3000/api/v2/users/register
+
+// Export the configured Express app instance
+export default app;
+
 
 
 
