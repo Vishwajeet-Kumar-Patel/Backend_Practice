@@ -38,3 +38,7 @@ function(error, result) {
         console.log(result);
     }
 });
+
+
+
+export {uploadOnCloudinary};
