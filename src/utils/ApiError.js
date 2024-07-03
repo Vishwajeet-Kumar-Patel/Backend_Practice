@@ -1,7 +1,7 @@
 class ApiError extends Error {
     constructor(
         statusCode,             // HTTP status code representing the error
-        message = "something went wrong", // Default error message
+        message = "Something went wrong", // Default error message
         errors = [],            // Array to hold additional error details
         stack = ""              // Optional stack trace
     ) {
