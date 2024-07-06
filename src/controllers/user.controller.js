@@ -82,13 +82,8 @@ const loginUser = asyncHandler(async (req, res) => {
     }
 
     // Validation: Check if email and password are provided
-    if (!email || !password) {
-        throw new ApiError(400, "Email and password are required");
-    }
-
-    // Validation: Check if username and password are provided
-    if (!userName || !password) {
-        throw new ApiError(400, "Username and password are required");
+    if (!userName && !email) {
+        throw new ApiError(400, "username or email is required")
     }
 
     // Check if user exists in the database
@@ -100,7 +95,7 @@ const loginUser = asyncHandler(async (req, res) => {
     }
 
     // Check if the password is correct
-    const isPasswordMatch = await user.matchPassword(password);
+    const isPasswordMatch = await user.isPasswordCorrect(password);
 
     // If password is incorrect, throw an error
     if (!isPasswordMatch) {
@@ -122,7 +117,6 @@ const loginUser = asyncHandler(async (req, res) => {
 
     // Set the cookie options
     const options = {
-        expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000),
          httpOnly: true,
          secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
      };
@@ -139,25 +133,30 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 
-const logoutUser = asyncHandler(async (req, res) => {
-    await User.findByIdAndUpdate(req.user._id,
-        { 
-            $set: {refreshToken: undefined} }, { new: true, runValidators: true });
+const logoutUser = asyncHandler(async(req, res) => {
+    await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $unset: {
+                refreshToken: 1 // this removes the field from document
+            }
+        },
+        {
+            new: true
+        }
+    )
 
-     const options = {
-         expires: new Date(Date.now() + 10 * 1000),
-         httpOnly: true,
-         secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
-     };       
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
 
-     return res.status(200)
-        .clearCookie('accessToken', options)
-        .clearCookie('refreshToken', options)
-        .json(
-            new ApiResponse(200, {}, "User logged out successfully")
-        );
-});
-
+    return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new ApiResponse(200, {}, "User logged Out"));
+})
 
 
 export { registerUser, loginUser, logoutUser };
