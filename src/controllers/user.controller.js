@@ -118,7 +118,7 @@ const loginUser = asyncHandler(async (req, res) => {
     // Set the cookie options
     const options = {
          httpOnly: true,
-         secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
+         secure: true,
      };
      
 
