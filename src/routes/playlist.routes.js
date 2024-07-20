@@ -3,7 +3,7 @@ import {createPlaylist, getPlaylists, getPlaylist, addVideoToPlaylist, removeVid
 
 const router = Router();
 
-router.use(verifyJWT); // Protect all routes in this file
+// router.use(verifyJWT); // Protect all routes in this file
 
 router.get("/playlists", getPlaylists);
 router.get("/playlists/:id", getPlaylist);

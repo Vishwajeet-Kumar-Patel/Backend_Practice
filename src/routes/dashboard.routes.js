@@ -7,7 +7,7 @@ import{
 
 const router = Router();
 
-router.use(verifyJWT); // Protect all routes in this file
+// router.use(verifyJWT); // Protect all routes in this file
 
 router.get("/dashboard/channel-stats", getChannelStats);
 router.get("/dashboard/channel-videos", getChannelVideos);

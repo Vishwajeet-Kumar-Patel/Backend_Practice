@@ -3,7 +3,7 @@ import {toggleSubscription, getUserChannelSubscribers, getUserSubscriptions} fro
 
 const router = Router();
 
-router.use(verifyJWT); // Protect all routes in this file
+// router.use(verifyJWT); // Protect all routes in this file
 
 router.post("/channels/:channelId/subscribe", toggleSubscription);
 router.get("/channels/:channelId/subscribers", getUserChannelSubscribers);

@@ -26,7 +26,28 @@ app.use(cookieParser());
 
 // Routes import and declaration
 import userRoutes from './routes/user.routes.js';
+import videoRoutes from './routes/video.routes.js';
+import commentRoutes from './routes/comments.routes.js';
+import likeRoutes from './routes/like.routes.js';
+import subscriptionRoutes from './routes/subscription.routes.js';
+import dashboardRoutes from './routes/dashboard.routes.js';
+import healthcheckRoutes from './routes/healthcheck.routes.js';
+import playlistRoutes from './routes/playlist.routes.js';
+import tweetRoutes from './routes/tweet.routes.js';
+
+
+
+// Mount the routes
 app.use('/api/v2/users', userRoutes); // Mount userRoutes under /api/v2/users
+app.use('/api/v2/videos', videoRoutes); // Mount videoRoutes under /api/v2/videos
+app.use('/api/v2/comments', commentRoutes); // Mount commentRoutes under /api/v2/comments
+app.use('/api/v2/likes', likeRoutes); // Mount likeRoutes under /api/v2/likes
+app.use('/api/v2/subscriptions', subscriptionRoutes); // Mount subscriptionRoutes under /api/v2/subscriptions
+app.use('/api/v2/dashboard', dashboardRoutes); // Mount dashboardRoutes under /api/v2/dashboard
+app.use('/api/v2/healthcheck', healthcheckRoutes); // Mount healthcheckRoutes under /api/v2/healthcheck
+app.use('/api/v2/playlists', playlistRoutes); // Mount playlistRoutes under /api/v2/playlists
+app.use('/api/v2/tweets', tweetRoutes); // Mount tweetRoutes under /api/v2/tweets
+
 
 // http://localhost:3000/api/v2/users/register
 

@@ -1,11 +1,10 @@
 import { Router } from "express";
-import * as commentsController from "../controllers/comments.controller";
 import {
     addComment,
     deleteComment,
     getVideoComments,
     updateComment,
-} from "../controllers/comment.controller.js"
+} from "../controllers/comments.controller.js"
 import {verifyJWT} from "../middlewares/auth.middleware.js"
 
 const router = Router();

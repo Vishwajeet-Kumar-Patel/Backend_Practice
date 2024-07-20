@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { healthcheck } from "../controllers/healthcheck.controller";
+import { healthcheck } from "../controllers/healthcheck.controller.js";
 
 const router = Router();
 
-router.use(verifyJWT); // Protect all routes in this file
+// router.use(verifyJWT); // Protect all routes in this file
 
 router.get("/healthcheck", healthcheck);
 

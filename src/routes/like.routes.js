@@ -3,7 +3,7 @@ import {toggleVideoLike, toggleCommentLike, toggleTweetLike, getLikedVideos} fro
 
 const router = Router();
 
-router.use(verifyJWT); // Protect all routes in this file
+//router.use(verifyJWT); // Protect all routes in this file
 
 router.post("/videos/:videoId/like", toggleVideoLike);
 router.post("/comments/:commentId/like", toggleCommentLike);
