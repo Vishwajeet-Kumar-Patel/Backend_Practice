@@ -338,6 +338,20 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, user, "Cover image updated successfully")); // Return a success response
 });    
 
+//MongoDB's aggregation pipeline is a framework that transforms documents into aggregated results by running them through a series of stages. Each stage performs an operation on the input documents, such as filtering, grouping, or calculating values. The output from each stage is passed to the next stage. 
+//The aggregation pipeline allows you to process data from a collection and return computed results. You can use the aggregation pipeline to group documents, filter them, and perform calculations on them. The aggregation pipeline is a powerful tool for working with MongoDB data.
+// Pipeline stages are the building blocks of the aggregation pipeline. Each stage performs a specific operation on the input documents and passes the results to the next stage. You can use multiple stages in a pipeline to transform the input documents into the desired output.
+// The aggregation pipeline consists of one or more stages. Each stage takes an array of documents as input and produces an array of documents as output. The output of one stage becomes the input of the next stage. The aggregation pipeline processes documents in the order of the stages.
+// $match: Filters the documents in the input stream based on the specified condition.
+// $lookup: Performs a left outer join to another collection in the same database to filter in documents from the "joined" collection for processing.
+// $addFields: Adds new fields to documents. Similar to $project, $addFields reshapes each document in the stream; specifically, by adding new fields to output documents that contain the results of an expression.
+// $project: Reshapes each document in the stream, such as by adding new fields or removing existing fields. For each input document, outputs one document. 
+// $size: Returns the number of elements in the array.
+// $cond: Evaluates a boolean expression to return one of two specified expressions.
+// $in: Returns true if a value is in an array, and false otherwise.
+// $first: Returns the first document in the input stream.
+// Use of $ operator to access fields from an array of embedded documents.
+
 const getUserChannelProfile = asyncHandler(async (req, res) => {
     const { userName } = req.params; // Get the username from the request parameters
     if (!userName?.trim()) { // Check if username is provided
@@ -345,12 +359,12 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
     }
 
     const channel = await User.aggregate([ // Find the user by username and populate the subscribers and subscribedTo fields
-        {
+        {   // Stage 1: Find the user by username
             $match: {
                 username: userName?.toLowerCase()
             }
         },
-        {
+        {   // Stage 2: Populate the subscribers and subscribedTo fields
             $lookup: {
                 from: "subscriptions",
                 localField: "_id",
@@ -358,7 +372,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
                 as: "subscribers"
             }
         },
-        {
+        {   // Stage 3: Populate the subscribers and subscribedTo fields
             $lookup: {
                 from: "subscriptions",
                 localField: "_id",
@@ -366,25 +380,25 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
                 as: "subscribedTo"
             }
         },
-        {
+        {   // Stage 4: Add fields to the document
             $addFields: {
                 subscribersCount: {
-                    $size: "$subscribers"
+                    $size: "$subscribers"  // Get the number of subscribers
                 },
                 channelsSubscribedToCount: {
-                    $size: "$subscribedTo"
+                    $size: "$subscribedTo" // Get the number of channels subscribed to by the user
                 },
-                isSubscribed: {
-                    $cond: {
-                        if: {$in: [req.user?._id, "$subscribers.subscriber"]},
+                isSubscribed: {  // Check if the user is subscribed to the channel
+                    $cond: {  // If the user is subscribed, return true, else return false
+                        if: {$in: [req.user?._id, "$subscribers.subscriber"]},  // Check if the user is in the subscribers array
                         then: true,
                         else: false
                     }
                 }
             }
         },
-        {
-            $project: {
+        {   // Stage 5: Project the fields to return
+            $project: {  // Return only the specified fields
                 fullName: 1,
                 userName: 1,
                 subscribersCount: 1,
@@ -407,18 +421,18 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
 
 const getWatchHistory = asyncHandler(async(req, res) => {
     const user = await User.aggregate([
-        {
-            $match: {
-                _id: new mongoose.Types.ObjectId(req.user._id)
+        {   // Stage 1: Find the user by id 
+            $match: {  //match the user by id  and new keyword to convert the user id to an ObjectId
+                _id: new mongoose.Types.ObjectId(req.user._id)  // Convert the user id to an ObjectId
             }
         },
-        {
-            $lookup: {
+        {   // Stage 2: Populate the watch history field
+            $lookup: {   // Populate the watch history field with videos and owner details
                 from: "videos",
                 localField: "watchHistory",
                 foreignField: "_id",
                 as: "watchHistory",
-                pipeline: [
+                pipeline: [  // Pipeline to populate the owner field
                     {
                         $lookup: {
                             from: "users",
@@ -436,7 +450,7 @@ const getWatchHistory = asyncHandler(async(req, res) => {
                             ]
                         }
                     },
-                    {
+                    {   // Stage 3: Add fields to the document
                         $addFields:{
                             owner:{
                                 $first: "$owner"
@@ -453,7 +467,7 @@ const getWatchHistory = asyncHandler(async(req, res) => {
     .json(
         new ApiResponse(
             200,
-            user[0].watchHistory,
+            user[0].watchHistory, // 0 index because the user is an array with one element
             "Watch history fetched successfully"
         )
     )
